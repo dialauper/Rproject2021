@@ -3,37 +3,46 @@
 
 ## tab/space delimited file converter to comma delimited
 
-txt2csv <- function(argfile) {
+txt2csv <- function(directory) {
+  #define set of files and loop
+  files <- list.files(path=directory, full.names = FALSE)
   
-  #infers the delimiter from a text file, stores delim as character 
-  delim <- get.delim(argfile, n = 10, comment = "#", skip = 1, delims = c("\t", " ")) 
-  
-  #based on the determined delimiter, these fns convert the file to a csv
-  if(delim == " "){
-    csvfile <- read.table(file=argfile, header=TRUE, sep="", stringsAsFactors = FALSE)
-  } else if(delim == "\t"){
-    csvfile <- read.table(file=argfile, header=TRUE, sep="\t", stringsAsFactors = FALSE)
-  }
-  
+for(i in 1:length(files)){
+    input <- files[i]
+    output <- paste0(gsub("\\.txt$", "", input),".csv")
+    data.csv <- read.table(file=input, header=TRUE, stringsAsFactors = FALSE)
+    write.csv(data.csv, file=output, col.names=TRUE, row.names=FALSE)
+    file.remove(input)
 }
-
-?get.delim()
-
-#define set of files and loop
-## load an original file
-# write out data in .csv format 
-#*change file name?
+}
 
 
 ## compile multiple csv files into one csv file
-#define set of files
-#open each file
-#add columns (country, DOY)
-#append/combine
-#handle NAs (argument)
-csvcompiler <- function(file) {
+csvcompiler <- function(directory) {
+  #define set of files
+  files<-list.files(path=directory, full.names = FALSE)
   
+for(i in 1:length(files[i])){
+  #open each file
+  openfile <- read.table(file=files[i], sep = ",", header=TRUE, stringsAsFactors = FALSE)
+  #add columns (country, DOY)
+  openfile$country <- c()
+  openfile$DOY <- c()
+  #append/combine
+  
+  #handle NAs (argument)
 }
+                                      
+}
+
+testcsv <- read.csv("BiocompR/Rproject2021/countryX/screen_175.csv")
+
+openfile <- read.table(file=testcsv, sep = ",", header=TRUE, stringsAsFactors = FALSE)
+#add columns (country, DOY)
+openfile$country <- c()
+openfile$DOY <- c()
+
+View(openfile)
 
 #summarize
 #assumes there is compiled data

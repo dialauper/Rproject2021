@@ -19,8 +19,28 @@ txt2csv <- function(argfile) {
 
 ?get.delim()
 
-## compile multiple csv files into one csv file
+#define set of files and loop
+## load an original file
+# write out data in .csv format 
+#*change file name?
 
+
+## compile multiple csv files into one csv file
+#define set of files
+#open each file
+#add columns (country, DOY)
+#append/combine
+#handle NAs (argument)
 csvcompiler <- function(file) {
   
 }
+
+#summarize
+#assumes there is compiled data
+#subset, count, sum
+#print plot in an informative way
+
+#analysis R
+#use functions you defined
+#answer 2 questions w/ explanation in comments
+#figure to support BOTH answers

@@ -1,55 +1,139 @@
 #### Supporting Functions R Script - Biocomp R Project
-### Dianna Perez
+### Dianna Perez and Abi Batkoff
+
+
+library(ggplot2)
 
 ## tab/space delimited file converter to comma delimited
 
 txt2csv <- function(directory) {
   #define set of files and loop
-  files <- list.files(path=directory, full.names = FALSE)
+  files <- list.files(path=directory, full.names = TRUE)
   
-for(i in 1:length(files)){
+  for(i in 1:length(files)){
     input <- files[i]
     output <- paste0(gsub("\\.txt$", "", input),".csv")
     data.csv <- read.table(file=input, header=TRUE, stringsAsFactors = FALSE)
     write.csv(data.csv, file=output, col.names=TRUE, row.names=FALSE)
     file.remove(input)
+  }
 }
-}
+#txt2csv("/Users/abigaylebatkoff/Downloads/MBA Year 1/Biocomputing/RProject2021/countryY")
 
 
-## compile multiple csv files into one csv file
-csvcompiler <- function(directory) {
-  #define set of files
-  files<-list.files(path=directory, full.names = FALSE)
+
+compileY <- function(directory){
+  #define a set of files of all the files 
+  setwd(directory)
+  files <- list.files(path=directory, pattern=".csv", full.names=FALSE, recursive=FALSE)
+  alldata<- data.frame()
   
-for(i in 1:length(files[i])){
-  #open each file
-  openfile <- read.table(file=files[i], sep = ",", header=TRUE, stringsAsFactors = FALSE)
-  #add columns (country, DOY)
-  openfile$country <- c()
-  openfile$DOY <- c()
-  #append/combine
+  #for loop over the rest of the files 
+  for(i in 1:length(files)){
+    if(i==1){
+      alldata <- rbind(alldata, (read.csv(files[i], header=TRUE, sep=",")))
+      alldata$country <- "X"
+      alldata$dayofYear <- substr(files[i], 8,10)
+    }else{
+      output <- read.csv(file=files[i], header=TRUE, sep=",")
+      #getting the text into the two new columns 
+      output$country<-"X"
+      #have to create some variable that labels the day of the year 
+      #basically telling it which position you want to cut out in the file name 
+      output$dayofYear <- substr(files[i],8,10) 
+      alldata <- rbind(alldata, output)
+    }
+  }
+  answer <- readline(prompt="Do you want to remove rows with NA values? (hit 1 if yes) Do you want to include NA values
+                     but be warned of their presence? (hit 2 if yes) Do you want to include NA values without a warning (hit 3 if yes)")
+  as.numeric(answer)
+  if( answer == 1){
+    #remove all rows with NAs
+    alldata <- na.omit(alldata)
+  }else if(answer == 2 && sum(is.na(alldata)) > 0){
+    #remove all rows with NAs with a warning
+    print("Warning: this compiled data contains NA values")
+  }else{
+    #keep all NAs without a warning
+    return(alldata)
+  }
+  return(alldata)
+}
+
+#dataY <- csvcompilerY("/Users/abigaylebatkoff/Downloads/MBA Year 1/Biocomputing/RProject2021/countryY")
+
+
+compileX <- function(directory){
+  #define a set of files of all the files 
+  setwd(directory)
+  files <- list.files(path=directory, pattern=".csv", full.names=FALSE, recursive=FALSE)
+  alldata<- data.frame()
   
-  #handle NAs (argument)
+  #for loop over the rest of the files 
+  for(i in 1:length(files)){
+    if(i==1){
+      alldata <- rbind(alldata, (read.csv(files[i], header=TRUE, sep=",")))
+      alldata$country <- "X"
+      alldata$dayofYear <- substr(files[i], 8,10)
+    }else{
+      output <- read.csv(file=files[i], header=TRUE, sep=",")
+      #getting the text into the two new columns 
+      output$country<-"X"
+      #have to create some variable that labels the day of the year 
+      #basically telling it which position you want to cut out in the file name 
+      output$dayofYear <- substr(files[i],8,10) 
+      alldata <- rbind(alldata, output)
+    }
+  }
+ 
+  
+  answer <- readline(prompt="Do you want to remove rows with NA values? (hit 1 if yes) Do you want to include NA values
+                     but be warned of their presence? (hit 2 if yes) Do you want to include NA values without a warning (hit 3 if yes)")
+  as.numeric(answer)
+  if( answer == 1){
+    #remove all rows with NAs
+    alldata <- na.omit(alldata)
+  }else if(answer == 2 && sum(is.na(alldata)) > 0){
+    #remove all rows with NAs with a warning
+    print("Warning: this compiled data contains NA values")
+  }else{
+    #keep all NAs without a warning
+    return(alldata)
+  }
+
+  return(alldata)
 }
-                                      
+
+#dataX<- csvcompilerX("/Users/abigaylebatkoff/Downloads/MBA Year 1/Biocomputing/RProject2021/countryX")
+
+#forrealalldata <- rbind(dataX,dataY)
+
+## summary plots 
+
+summaryfunction <- function(file=forrealalldata){
+  numofscreens <- nrow(forrealalldata)
+  numinfected <- nrow(forrealalldata[which(rowSums(forrealalldata[,3:12]) >=1),])
+  percentinfected <- numinfected / numofscreens
+  male <- nrow(forrealalldata[which(forrealalldata$gender == "male"),])
+  female <- nrow(forrealalldata[which(forrealalldata$gender == "female"),])
+  plot <- ggplot(data=forrealalldata,aes(x=age))+
+    geom_histogram(binwidth = 2, fill = "blue")+
+    scale_x_continuous(limits=c(0,100))+
+    xlab("Age")+
+    ylab("Number of Patients")+
+    ggtitle("Age Distribution of Patients")+
+  theme_classic()
+  
+  print("Here is the total number of screens:")
+  print(numofscreens)
+  print("Here is the percent of patients that were infected:")
+  print(percentinfected*100)
+  print("Here is the number of male and female patients, respectively:")
+  print(male)
+  print(female)
+  print("Lastly, the plot shows the age distribution")
+  return(plot)
 }
+  
 
-testcsv <- read.csv("BiocompR/Rproject2021/countryX/screen_175.csv")
 
-openfile <- read.table(file=testcsv, sep = ",", header=TRUE, stringsAsFactors = FALSE)
-#add columns (country, DOY)
-openfile$country <- c()
-openfile$DOY <- c()
-
-View(openfile)
-
-#summarize
-#assumes there is compiled data
-#subset, count, sum
-#print plot in an informative way
-
-#analysis R
-#use functions you defined
-#answer 2 questions w/ explanation in comments
-#figure to support BOTH answers

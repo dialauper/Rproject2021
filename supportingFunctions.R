@@ -23,12 +23,12 @@ txt2csv <- function(directory) {
 
 
 compileY <- function(directory){
-  #define a set of files of all the files 
+  #list files
   setwd(directory)
   files <- list.files(path=directory, pattern=".csv", full.names=FALSE, recursive=FALSE)
   alldata<- data.frame()
   
-  #for loop over the rest of the files 
+  #for loop to add filesafter the first one
   for(i in 1:length(files)){
     if(i==1){
       alldata <- rbind(alldata, (read.csv(files[i], header=TRUE, sep=",")))
@@ -36,10 +36,9 @@ compileY <- function(directory){
       alldata$dayofYear <- substr(files[i], 8,10)
     }else{
       output <- read.csv(file=files[i], header=TRUE, sep=",")
-      #getting the text into the two new columns 
+      #fill in the two new columns
       output$country<-"X"
-      #have to create some variable that labels the day of the year 
-      #basically telling it which position you want to cut out in the file name 
+      #extract day of Year from file name 
       output$dayofYear <- substr(files[i],8,10) 
       alldata <- rbind(alldata, output)
     }
@@ -64,12 +63,12 @@ compileY <- function(directory){
 
 
 compileX <- function(directory){
-  #define a set of files of all the files 
+  #list files
   setwd(directory)
   files <- list.files(path=directory, pattern=".csv", full.names=FALSE, recursive=FALSE)
   alldata<- data.frame()
   
-  #for loop over the rest of the files 
+  #for loop to add filesafter the first one 
   for(i in 1:length(files)){
     if(i==1){
       alldata <- rbind(alldata, (read.csv(files[i], header=TRUE, sep=",")))
@@ -77,10 +76,9 @@ compileX <- function(directory){
       alldata$dayofYear <- substr(files[i], 8,10)
     }else{
       output <- read.csv(file=files[i], header=TRUE, sep=",")
-      #getting the text into the two new columns 
+      #fill in the two new columns 
       output$country<-"X"
-      #have to create some variable that labels the day of the year 
-      #basically telling it which position you want to cut out in the file name 
+      #extract day of Year from file name  
       output$dayofYear <- substr(files[i],8,10) 
       alldata <- rbind(alldata, output)
     }
